@@ -1,0 +1,9 @@
+{% if timesheet_list %}
+    <ul>
+    {% for timesheet in timesheet_list %}
+        <li><a href="//{{ timesheet.id }}/">{{ timesheet.start }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No timesheet are available.</p>
+{% endif %}
