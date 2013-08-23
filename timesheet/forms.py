@@ -1,6 +1,6 @@
-from django.forms import ModelForm
-from leantracker.timesheet.models import Timesheet
+from django import forms
+from django.forms import Form,ChoiceField
+from leantracker.projects.models import Project
 
-class TimesheetForm(ModelForm):
-    class Meta:
-        model = Timesheet
+class TimesheetForm(Form):
+   projects = forms.ChoiceField(choices=[("*", "---")] + [(x.id, x.name) for x in Project.groupproject_objects.all()])

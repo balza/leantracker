@@ -1,8 +1,8 @@
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import FormView
 from leantracker.timesheet.forms import TimesheetForm
 
 
-class TimesheetCreateView(CreateView):
+class TimesheetView(FormView):
     form_class = TimesheetForm
     template_name = 'timesheet/timesheet_form.html'
     success_url = 'success'

@@ -1,5 +1,10 @@
 from django.db import models
+from django.db.models import Manager
 from django.contrib.auth.models import Group
+
+class GroupProjectManager(models.Manager):
+    def get_queryset(self):
+        return super(ProjectGroupManager, self).get_queryset()
 
 class Project(models.Model):
     name = models.CharField(max_length=255)
@@ -18,8 +23,9 @@ class Project(models.Model):
             self.code = self.id
             super(Project, self).save(*args, **kwargs)
 
+    groupproject_objects = GroupProjectManager() 
+   
     class Meta:
         permissions = (
             ("can_admin_project", "Can admin Projects"),
         )
-

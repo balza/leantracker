@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from django.views.generic import DetailView, ListView, CreateView
 from leantracker.timesheet.models import Timesheet
-from leantracker.timesheet.views import TimesheetCreateView
+from leantracker.timesheet.views import TimesheetView
 
 urlpatterns = patterns('',
     url(r'^$',
@@ -12,7 +12,7 @@ urlpatterns = patterns('',
         )
     ),
     url(r'^create/',
-        TimesheetCreateView.as_view()
+        TimesheetView.as_view()
     ),
 )
 
