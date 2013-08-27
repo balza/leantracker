@@ -9,8 +9,8 @@ TIMESHEET_STATUS = (
     ('A', 'Accepted'),
 )
 
-class Registration(models.Model):
-  project = models.ForeignKey(Project)
+class TimeEntry(models.Model):
+  project = models.ForeignKey(Project)  
   hours = models.IntegerField()
   user = models.ForeignKey(User)
   reg_date = models.DateTimeField('Registration date')
@@ -22,6 +22,7 @@ class Timesheet(models.Model):
   start = models.DateField('Timesheet start')
   end = models.DateField('Timesheet end') 
   status = models.CharField(max_length=20, choices=TIMESHEET_STATUS, default=0)
+  user = models.ForeignKey(User)
  
   def __unicode__(self):
     return "timesheet from %s to %s" % (self.start, self.end) 

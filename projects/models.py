@@ -23,7 +23,8 @@ class Project(models.Model):
             self.code = self.id
             super(Project, self).save(*args, **kwargs)
 
-    groupproject_objects = GroupProjectManager() 
+    group_projects = GroupProjectManager() 
+    objects = models.Manager()
    
     class Meta:
         permissions = (
