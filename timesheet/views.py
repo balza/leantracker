@@ -1,5 +1,6 @@
 from leantracker.timesheet.forms import TimesheetForm
 from django.forms.formsets import formset_factory
+from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 
 def manage_timesheet(request):
@@ -10,5 +11,6 @@ def manage_timesheet(request):
            return render_to_response('timesheet/index.html')
     else:
         formset = TimesheetFormSet()
-    return render_to_response('timesheet/timesheet_form.html', {'formset': formset})
+    return render_to_response('timesheet/timesheet_form.html', {'formset': formset}, context_instance=RequestContext(request))
+
 
