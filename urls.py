@@ -14,5 +14,5 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^timesheet/', include('timesheet.urls')),
+    url(r'^timesheet/', include('timesheet.urls', namespace='timesheet', app_name='timesheet')),
 )

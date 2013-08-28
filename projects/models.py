@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Manager
 from django.contrib.auth.models import Group
 
+#Valuta anche il Project.objects.filter(groups=???)
 class GroupProjectManager(models.Manager):
     def get_queryset(self):
         return super(ProjectGroupManager, self).get_queryset()

@@ -1,16 +1,12 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
-
 from django.test import TestCase
+from django.test.client import Client
+from django.core.urlresolvers import reverse
 
-
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
+class CreateTimesheetViewTests(TestCase):
+    def test_insert_timesheet(self):
         """
-        Tests that 1 + 1 always equals 2.
+        Provided a validated TimesheetForm must create an entry in Timesheet table and an entry in TimesheetEntry table for each day 
+        inserted with != 0 value
         """
-        self.assertEqual(1 + 1, 2)
+        csrf_client = Client(enforce_csrf_checks=True)
+        response = self.client.get(reverse('timesheet:create'))

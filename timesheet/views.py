@@ -3,7 +3,7 @@ from django.forms.formsets import formset_factory
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 
-def manage_timesheet(request):
+def create_timesheet(request):
     TimesheetFormSet = formset_factory(TimesheetForm)
     if request.method == 'POST':
         formset = TimesheetFormSet(request.POST, request.FILES)
