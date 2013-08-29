@@ -9,7 +9,8 @@ urlpatterns = patterns('',
             queryset=Timesheet.objects.order_by('-id')[:5],
             context_object_name='timesheet_list',
             template_name='timesheet/index.html',
-        )
+        ),
+        name="list"
     ),
     url(r'^create/$', create_timesheet, name="create"),
 )

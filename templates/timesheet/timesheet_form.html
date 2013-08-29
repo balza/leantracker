@@ -12,21 +12,22 @@
       </tr></thead>
       {% endif %}
       <tr class="{% cycle row1,row2 %}">
-      {% for field in form.visible_fields %}
-        <td>
-        {# Include the hidden fields in the form #}
-        {% if forloop.first %}
-          {% for hidden in form.hidden_fields %}
-          {{ hidden }}
-          {% endfor %}
-        {% endif %}
-          {{ field.errors.as_ul }}
-          {{ field }}
-        </td>
-      {% endfor %}
+          {% for field in form.visible_fields %}
+            <td>
+            {# Include the hidden fields in the form #}
+            {% if forloop.first %}
+              {% for hidden in form.hidden_fields %}
+              {{ hidden }}
+              {% endfor %}
+            {% endif %}
+              {{ field.errors.as_ul }}
+              {{ field }}
+            </td>
+          {% endfor %}       
       </tr>
     {% endfor %}
     </table>
-    <p><input type="submit" value="Submit timesheet" /></p>
+    <p><input type="submit" value="Add row" name="add_row"/></p>
+    <p><input type="submit" value="Submit timesheet" name="submit"/></p>
 </form>
 
