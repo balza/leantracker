@@ -1,6 +1,11 @@
 <form action="." method="post">
     {% csrf_token %}
     {{ formset.management_form }}    
+    {% for dict in formset.errors %}
+        {% for error in dict.values %}
+            {{ error }}
+        {% endfor %}
+    {% endfor %}    
     {{ formset.non_form_errors.as_ul }}
     <table id="formset" class="form">
     {% for form in formset.forms %}
