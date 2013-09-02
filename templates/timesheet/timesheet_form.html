@@ -1,7 +1,7 @@
 <form action="." method="post">
     {% csrf_token %}
     {{ formset.management_form }}    
-    {{ formset.non_form_errors.as_ul }}
+    {{ formset.non_form_errors.as_p }}
     <table id="formset" class="form">
     {% for form in formset.forms %}
       {% if forloop.first %}
@@ -27,6 +27,7 @@
       </tr>
     {% endfor %}
     </table>
+    <p><input type="submit" value="Delete rows" name="delete_rows"/></p>
     <p><input type="submit" value="Add row" name="add_row"/></p>
     <p><input type="submit" value="Submit timesheet" name="submit"/></p>
 </form>
