@@ -1,8 +1,7 @@
 from django import forms
-from django.forms import Form,ModelForm,ChoiceField,TextInput,ModelChoiceField
+from django.forms import Form
 from django.forms.formsets import BaseFormSet
 from leantracker.projects.models import Project
-from leantracker.timesheet.models import Timesheet
 from datetime import date, timedelta
 from django.utils.safestring import mark_safe
 
@@ -39,8 +38,7 @@ class TimesheetForm(Form):
     def __init__(self, *args, **kwargs):
         super(TimesheetForm, self).__init__(*args, **kwargs)        
 
-    def clean(self):  
-        print "TimesheetForm clean"  
+    def clean(self):          
         cleaned_data = super(TimesheetForm, self).clean()        
         mon = cleaned_data.get("mon")
         tue = cleaned_data.get("tue")        
@@ -48,10 +46,23 @@ class TimesheetForm(Form):
             raise forms.ValidationError("Did not send for 'help' in "
                             "the subject despite CC'ing yourself.")
         return cleaned_data
+        
+    def save(self):
+        print "TimesheetForm save"
 
 class BaseTimesheetFormSet(BaseFormSet): 
+    
     def clean(self):
         if any(self.errors):            
             return 
+            
+    def save(self, *args, **kwargs):
+        for form in self.forms:
+            if form in self.deleted_forms:
+                print "deleted form"
+            else:
+                print "form valid"
+                form.save()
+                
 
 

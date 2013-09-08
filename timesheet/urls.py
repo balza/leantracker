@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-from django.views.generic import DetailView, ListView, CreateView
+from django.views.generic import ListView
 from leantracker.timesheet.models import Timesheet
 from leantracker.timesheet.views import create_timesheet
 
