@@ -1,11 +1,10 @@
 from django import forms
-from django.forms import Form
-from django.forms.formsets import BaseFormSet
+from django.forms import ModelForm
+from django.forms.models import BaseModelFormSet
 from leantracker.projects.models import Project
-from leantracker.timesheet.models import Timesheet
+from leantracker.timesheet.models import Timesheet, WeekEntry
 from datetime import date, timedelta
 from django.utils.safestring import mark_safe
-from django.contrib.auth.decorators import login_required
 from django.utils.functional import curry
 
 
@@ -25,7 +24,7 @@ def week_start_date(year, week):
     delta = timedelta(days=-delta_days, weeks=delta_weeks)
     return d + delta
 
-class TimesheetForm(Form):
+class TimesheetForm(ModelForm):
 	#TODO: filtrare solo per il gruppo dell'utente
     project = forms.ModelChoiceField(required=False,queryset=Project.objects.all(), empty_label="-------")
     delta = timedelta(days=1)
@@ -56,20 +55,21 @@ class TimesheetForm(Form):
             raise forms.ValidationError("Insert at least a day")
         return cleaned_data
         
-class TimesheetBaseFormSet(BaseFormSet):
+    class Meta:
+        model = WeekEntry
+        #managed = False
+        
+class TimesheetBaseFormSet(BaseModelFormSet):
   
-    #def __init__(self, *args, **kwargs):
-    #    self._user = kwargs.pop("user")        
-    #    super(TimesheetBaseFormSet, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):        
+        self._user = kwargs.pop("user")
+        #print "Prima dell'errore"
+        super(TimesheetBaseFormSet, self).__init__(*args, **kwargs)
+        #print "Prima dell'errore XXX"
     
-    #@login_required
-    #def save(self):        
-    #    monday = first_day_of_this_week(date.today())
-    #    delta = timedelta(days = 7)
-    #    Timesheet.objects.create_timesheet(monday, monday + delta, self._user)
-    
-    #TODO: camviare in save e cambiare le classi da cui eredita da BaseFormSet a FormSet 
-    def salva(self, user):      
-      monday = first_day_of_this_week(date.today())
-      delta = timedelta(days = 7)      
-      Timesheet.objects.create_timesheet(monday, monday + delta, user)
+    def save(self):        
+        monday = first_day_of_this_week(date.today())
+        delta = timedelta(days = 7)
+        Timesheet.objects.create_timesheet(monday, monday + delta, self._user)
+       
+      

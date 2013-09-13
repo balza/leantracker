@@ -9,6 +9,19 @@ TIMESHEET_STATUS = (
     ('A', 'Accepted'),
 )
 
+class WeekEntry(models.Model):
+    mon = 0
+    tue = 0
+    wed = 0
+    thu = 0
+    fri = 0
+    sat = 0
+    sun = 0
+    
+    class Meta:
+        managed = False
+    
+
 class TimeEntry(models.Model):
     
   project = models.ForeignKey(Project)  
@@ -25,7 +38,8 @@ class TimesheetManager(models.Manager):
         timesheet = self.create(start=start, end=end, status='W',user=user)        
         return timesheet
 
-class Timesheet(models.Model):    
+class Timesheet(models.Model):
+    
     start = models.DateField('Timesheet start')
     end = models.DateField('Timesheet end') 
     status = models.CharField(max_length=20, choices=TIMESHEET_STATUS, default=0)    
@@ -36,5 +50,3 @@ class Timesheet(models.Model):
         
     objects = TimesheetManager()
     
-    
-
