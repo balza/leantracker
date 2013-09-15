@@ -2,10 +2,9 @@ from django import forms
 from django.forms import ModelForm
 from django.forms.models import BaseModelFormSet
 from leantracker.projects.models import Project
-from leantracker.timesheet.models import Timesheet, WeekEntry
+from leantracker.timesheet.models import Timesheet, TimeEntry
 from datetime import date, timedelta
 from django.utils.safestring import mark_safe
-from django.utils.functional import curry
 
 
 #TODO: spostare in una classe adeguata
@@ -38,11 +37,16 @@ class TimesheetForm(ModelForm):
     sun = forms.IntegerField(max_value=24,min_value=0,widget=forms.TextInput(attrs={'size':'2','value':'0'}),label=mark_safe((monday + 6 * delta).strftime("%a <br/> %d %b")))
     
        
-    #def __init__(self, *args, **kwargs):
-    #    self._user = kwargs.pop('user')        
-    #    super(TimesheetForm, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        self._user = kwargs.pop('user')        
+        super(TimesheetForm, self).__init__(*args, **kwargs)
+    
+    def save(self):
+        #TODO: implement!
+        print "TimesheetForm save" + str(self._user)
 
-    def clean(self):          
+    def clean(self): 
+        #TODO: is it really usefull with server side validation?         
         cleaned_data = super(TimesheetForm, self).clean()        
         mon = cleaned_data.get("mon")
         tue = cleaned_data.get("tue")
@@ -56,20 +60,20 @@ class TimesheetForm(ModelForm):
         return cleaned_data
         
     class Meta:
-        model = WeekEntry
-        #managed = False
+        model = TimeEntry
+        exclude = ('hours', 'user', 'reg_date', )
         
 class TimesheetBaseFormSet(BaseModelFormSet):
   
     def __init__(self, *args, **kwargs):        
-        self._user = kwargs.pop("user")
-        #print "Prima dell'errore"
-        super(TimesheetBaseFormSet, self).__init__(*args, **kwargs)
-        #print "Prima dell'errore XXX"
+        self._user = kwargs.pop("user")        
+        super(TimesheetBaseFormSet, self).__init__(*args, **kwargs)       
     
-    def save(self):        
+    def save(self):
         monday = first_day_of_this_week(date.today())
         delta = timedelta(days = 7)
-        Timesheet.objects.create_timesheet(monday, monday + delta, self._user)
+        Timesheet.objects.create_timesheet(monday, monday + delta, self._user)        
+        for form in self.forms:
+            form.save();
        
       

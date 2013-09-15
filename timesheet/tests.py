@@ -3,10 +3,10 @@ from django.test.client import Client
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from leantracker.timesheet.forms import TimesheetForm, TimesheetBaseFormSet, first_day_of_this_week
-from leantracker.timesheet.models import Timesheet, WeekEntry
+from leantracker.timesheet.models import Timesheet, TimeEntry
 from datetime import date
 from django.contrib.auth.models import User
-from django.utils.functional import curry, wraps
+from django.utils.functional import curry
 
 class CreateTimesheetViewTests(TestCase):
     
@@ -52,7 +52,8 @@ class FormTests(TestCase):
       self.assertEqual(aspected_result, first_day_of_this_week(today))
              
     def test_timesheet_formset(self):      
-      TimesheetFormSet = modelformset_factory(WeekEntry, form=TimesheetForm, formset=TimesheetBaseFormSet)
+      TimesheetFormSet = modelformset_factory(TimeEntry, form=TimesheetForm, formset=TimesheetBaseFormSet)
+      TimesheetFormSet.form = staticmethod(curry(TimesheetForm, user=self.user))
       data = {
         'form-TOTAL_FORMS': u'1',
         'form-INITIAL_FORMS': u'0',
