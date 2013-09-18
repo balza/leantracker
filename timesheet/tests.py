@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from leantracker.timesheet.forms import TimesheetForm, TimesheetBaseFormSet, first_day_of_this_week
 from leantracker.timesheet.models import Timesheet, TimeEntry
+from leantracker.projects.models import Project
 from datetime import date
 from django.contrib.auth.models import User
 from django.utils.functional import curry
@@ -41,10 +42,13 @@ class CreateTimesheetViewTests(TestCase):
         response = self.client.get(reverse('timesheet:create'))
         self.assertEqual(response.status_code, 200)
 
-class FormTests(TestCase):
+class TimesheetFormFormsTests(TestCase):
     
     def setUp(self):
-      self.user = User.objects.create_user('temporary', 'temporary@gmail.com', 'temporary')  
+      self.user = User.objects.create_user('temporary', 'temporary@gmail.com', 'temporary')
+      project = Project()
+      project.save()
+      print Project.objects.all()
   
     def test_first_day_of_this_week(self):
       today = date(2013, 8, 29)
@@ -55,10 +59,16 @@ class FormTests(TestCase):
       TimesheetFormSet = modelformset_factory(TimeEntry, form=TimesheetForm, formset=TimesheetBaseFormSet)
       TimesheetFormSet.form = staticmethod(curry(TimesheetForm, user=self.user))
       data = {
-        'form-TOTAL_FORMS': u'1',
+        'form-TOTAL_FORMS': u'2',
         'form-INITIAL_FORMS': u'0',
         'form-MAX_NUM_FORMS': u'',
+        'form-0-project': u'1',
+        'form-0-mon': u'8',
+        'form-1-project': u'2',
+        'form-1-mon': u'8',
+        'form-1-fri': u'8',
       }
       formset = TimesheetFormSet(data, user=self.user)      
       formset.save()
       self.assertEqual(1, Timesheet.objects.all().count())
+      #self.assertEqual(3, TimeEntry.objects.all().count())
