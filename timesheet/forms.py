@@ -42,11 +42,11 @@ class TimesheetForm(ModelForm):
         super(TimesheetForm, self).__init__(*args, **kwargs)
     
     def save(self):
-        print "*** form save"
-        #timeEntry = TimeEntry()
+        project = Project.objects.get(pk=1)
         for field in self.fields:
-            print "field " + str(field)
-        #timeEntry.save()
+            print self.monday
+            timeEntry = TimeEntry(project = project, hours = 8, user = self._user, reg_date = date(2005, 1, 1))
+            timeEntry.save()
 
     def clean(self): 
         #TODO: is it really usefull with server side validation?         

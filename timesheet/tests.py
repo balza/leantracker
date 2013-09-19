@@ -71,4 +71,4 @@ class TimesheetFormFormsTests(TestCase):
       formset = TimesheetFormSet(data, user=self.user)      
       formset.save()
       self.assertEqual(1, Timesheet.objects.all().count())
-      #self.assertEqual(3, TimeEntry.objects.all().count())
+      self.assertEqual(3, TimeEntry.objects.all().count())
