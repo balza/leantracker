@@ -3,7 +3,7 @@ from django.db.models import Manager
 from django.contrib.auth.models import Group
 
 #Valuta anche il Project.objects.filter(groups=???)
-class GroupProjectManager(models.Manager):
+class GroupProjectManager(Manager):
     def get_queryset(self):
         return super(ProjectGroupManager, self).get_queryset()
 
@@ -25,7 +25,7 @@ class Project(models.Model):
             super(Project, self).save(*args, **kwargs)
 
     group_projects = GroupProjectManager() 
-    objects = models.Manager()
+    objects = Manager()
    
     class Meta:
         permissions = (
