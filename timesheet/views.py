@@ -11,20 +11,42 @@ def create_timesheet(request):
     TimesheetFormSet = formset_factory(TimesheetForm)    
     if request.method == 'POST':        
         formset = TimesheetFormSet(request.POST, request.FILES)           
-        if 'submit' in request.POST:
-            print "submit"                  
-            if formset.is_valid():
-                print "is_valid"       
-                timesheet = Timesheet()
+        if 'submit' in request.POST:                 
+            if formset.is_valid():                
+                timesheet = Timesheet(week_number=23, year=2013, status='W',user = request.user)
                 timesheet.save()
-                for form in formset: 
-                    project = request.cleaned_data("project")
-                    timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
-                    timeEntry.save()
-                    print "Form"
-                
+                for form in formset:
+                    project = form.cleaned_data["project"]
+                    mon = form.cleaned_data["mon"]                        
+                    tue = form.cleaned_data["tue"]
+                    wed = form.cleaned_data["wed"]
+                    thu = form.cleaned_data["thu"]
+                    fri = form.cleaned_data["fri"]
+                    sat = form.cleaned_data["sat"]
+                    sun = form.cleaned_data["sun"]
+                    if mon != 0:
+                        print mon +str(mon)
+                        timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
+                        timeEntry.save()
+                    if tue != 0:
+                        timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
+                        timeEntry.save()
+                    if wed != 0:
+                        timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
+                        timeEntry.save()
+                    if thu != 0:
+                        timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
+                        timeEntry.save()
+                    if fri != 0:
+                        timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
+                        timeEntry.save()
+                    if sat != 0:
+                        timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
+                        timeEntry.save()
+                    if sun != 0:
+                        timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
+                        timeEntry.save()
                 return render_to_response('timesheet/index.html')        
     else:                
-        formset = TimesheetFormSet() 
-        
+        formset = TimesheetFormSet()        
     return render_to_response('timesheet/timesheet_form.html', {'formset': formset}, context_instance=RequestContext(request))

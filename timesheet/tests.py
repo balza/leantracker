@@ -49,13 +49,14 @@ class CreateTimesheetViewTests(TestCase):
         response = self.client.post(reverse('timesheet:create'), post_data, follow=True)
         print response
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'timesheet/timesheet_form.html')
+        self.assertEqual(1, Timesheet.objects.count())
+        self.assertEqual(3, TimeEntry.objects.count())
+        self.assertTemplateUsed(response, 'timesheet/index.html')
         #self.assertQuerysetEqual(
         #    response.context['latest_poll_list'],
         #    ['<Poll: Past poll.>']
         #)
-        self.assertEqual(1, Timesheet.objects.count())
-        self.assertEqual(3, TimeEntry.objects.count())
+        
         
     def test_create_timesheet_get(self): 
         self.client.login(username='john', password='johnpassword')
