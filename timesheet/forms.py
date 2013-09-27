@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import Form
 from leantracker.projects.models import Project
+from leantracker.timesheet.models import TimeEntry
 from datetime import date, timedelta
 from django.utils.safestring import mark_safe
 
@@ -33,7 +34,13 @@ class TimesheetForm(Form):
     fri = forms.IntegerField(required=False, max_value=24,min_value=0,widget=forms.TextInput(attrs={'size':'2','value':'0'}),label=mark_safe((monday + 4 * delta).strftime("%a <br/> %d %b")))
     sat = forms.IntegerField(required=False, max_value=24,min_value=0,widget=forms.TextInput(attrs={'size':'2','value':'0'}),label=mark_safe((monday + 5 * delta).strftime("%a <br/> %d %b")))
     sun = forms.IntegerField(required=False, max_value=24,min_value=0,widget=forms.TextInput(attrs={'size':'2','value':'0'}),label=mark_safe((monday + 6 * delta).strftime("%a <br/> %d %b")))
-     
+    
+    '''
+    def __init__(self, *args, **kwargs):
+        self._user = kwargs.pop('user')
+        super(TimesheetForm, self).__init__(*args, **kwargs)
+    '''
+         
     def clean(self): 
         cleaned_data = super(TimesheetForm, self).clean()          
         mon = cleaned_data.get("mon")
@@ -46,4 +53,35 @@ class TimesheetForm(Form):
         if mon==0 and tue==0 and wed==0 and thu==0 and fri==0 and sat==0  and sun==0:            
             raise forms.ValidationError("Insert at least a day")       
         return cleaned_data
+    
+    def save(self):
+      project = self.cleaned_data["project"]
+      mon = self.cleaned_data["mon"]                        
+      tue = self.cleaned_data["tue"]
+      wed = self.cleaned_data["wed"]
+      thu = self.cleaned_data["thu"]
+      fri = self.cleaned_data["fri"]
+      sat = self.cleaned_data["sat"]
+      sun = self.cleaned_data["sun"]
+      if mon != 0:                        
+          timeEntry = TimeEntry(project = project, hours = 8, user = self._user, reg_date = date(2005, 1, 1))
+          timeEntry.save()
+      if tue != 0:
+          timeEntry = TimeEntry(project = project, hours = 8, user = self._user, reg_date = date(2005, 1, 1))
+          timeEntry.save()
+      if wed != 0:                        
+          timeEntry = TimeEntry(project = project, hours = 8, user = self._user, reg_date = date(2005, 1, 1))
+          timeEntry.save()
+      if thu != 0:                        
+          timeEntry = TimeEntry(project = project, hours = 8, user = self._user, reg_date = date(2005, 1, 1))
+          timeEntry.save()
+      if fri != 0:                        
+          timeEntry = TimeEntry(project = project, hours = 8, user = self._user, reg_date = date(2005, 1, 1))
+          timeEntry.save()
+      if sat != 0:                        
+          timeEntry = TimeEntry(project = project, hours = 8, user = self._user, reg_date = date(2005, 1, 1))
+          timeEntry.save()
+      if sun != 0:                        
+          timeEntry = TimeEntry(project = project, hours = 8, user = self._user, reg_date = date(2005, 1, 1))
+          timeEntry.save()   
        

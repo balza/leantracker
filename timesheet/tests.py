@@ -24,7 +24,7 @@ class CreateTimesheetViewTests(TestCase):
         """
         self.client.login(username='john', password='johnpassword')
         post_data = {
-            'form-TOTAL_FORMS': u'1',
+            'form-TOTAL_FORMS': u'2',
             'form-INITIAL_FORMS': u'0',
             'form-MAX_NUM_FORMS': u'',
             'form-0-project': u'1',

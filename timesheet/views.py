@@ -15,7 +15,7 @@ def create_timesheet(request):
             if formset.is_valid():                
                 timesheet = Timesheet(week_number=23, year=2013, status='W',user = request.user)
                 timesheet.save()
-                for form in formset:
+                for form in formset:  
                     project = form.cleaned_data["project"]
                     mon = form.cleaned_data["mon"]                        
                     tue = form.cleaned_data["tue"]
@@ -24,28 +24,27 @@ def create_timesheet(request):
                     fri = form.cleaned_data["fri"]
                     sat = form.cleaned_data["sat"]
                     sun = form.cleaned_data["sun"]
-                    if mon != 0:
-                        print mon +str(mon)
+                    if mon != 0:                        
                         timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
                         timeEntry.save()
                     if tue != 0:
                         timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
                         timeEntry.save()
-                    if wed != 0:
+                    if wed != 0:                        
                         timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
                         timeEntry.save()
-                    if thu != 0:
+                    if thu != 0:                        
                         timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
                         timeEntry.save()
-                    if fri != 0:
+                    if fri != 0:                        
                         timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
                         timeEntry.save()
-                    if sat != 0:
+                    if sat != 0:                        
                         timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
                         timeEntry.save()
-                    if sun != 0:
+                    if sun != 0:                        
                         timeEntry = TimeEntry(project = project, hours = 8, user = request.user, reg_date = date(2005, 1, 1))
-                        timeEntry.save()
+                        timeEntry.save()                                        
                 return render_to_response('timesheet/index.html')        
     else:                
         formset = TimesheetFormSet()        
