@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="style.css" />
-    <title>{% block title %}Timesheet{% endblock %}</title>
-</head>
+<html lang="it" xml:lang="it">
+    <head>
+        <link rel="stylesheet" href="style.css" />
+        <title>{% block title %}Timesheet{% endblock %}</title>
+    </head>
 
-<body>
-    <div id="sidebar">
-        {% block sidebar %}
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/blog/">Blog</a></li>
-        </ul>
-        {% endblock %}
-    </div>
+    <body>
+        <div id="sidebar">
+            {% block sidebar %}
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/blog/">Blog</a></li>
+            </ul>
+            {% endblock %}
+        </div>
 
-    <div id="content">
-        {% block content %}{% endblock %}
-    </div>
-</body>
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+    </body>
 </html>

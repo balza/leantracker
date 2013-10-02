@@ -1,10 +1,35 @@
-{% if timesheet_list %}
-    <ul>
-    {% for timesheet in timesheet_list %}
-        <li><a href="//{{ timesheet.id }}/">{{ timesheet.start }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No timesheet are available.</p>
-{% endif %}
-<a href="{% url timesheet:create year=2013 week_number=32%}">new timesheet</a>
+{% extends "base.html" %}
+
+{% block content %}
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+        <script type="text/javascript" src="http://keith-wood.name/js/jquery.datepick-it.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.js"></script>
+        <script type="text/javascript">
+            //<![CDATA[
+                $(window).load(function(){
+                    $(".calendar").datepicker({
+                        showWeek: true,
+                        onSelect: function(dateText, inst) {
+                            var url_mask = "{% url timesheet:create year=12345 week_number=54321%}";
+                            var date = $(this).datepicker('getDate'),
+                                year =  date.getFullYear();
+                            url_mask = url_mask.replace(/12345/, year);
+                            url_mask = url_mask.replace(/54321/, $.datepicker.iso8601Week(new Date(dateText)));
+                            window.location = url_mask
+                        }
+                    });
+                });
+            //]]>
+        </script>
+        {% if timesheet_list %}
+            <ul>
+            {% for timesheet in timesheet_list %}
+                <li><a href="//{{ timesheet.id }}/">{{ timesheet.start }}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No timesheet are available.</p>
+        {% endif %}
+        new timesheet <input type="text" class="calendar">
+{% endblock %}
