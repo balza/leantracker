@@ -7,4 +7,4 @@
 {% else %}
     <p>No timesheet are available.</p>
 {% endif %}
-<a href="{% url timesheet:create %}">new timesheet</a>
+<a href="{% url timesheet:create year=2013 week_number=32%}">new timesheet</a>

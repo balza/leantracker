@@ -7,7 +7,7 @@ from leantracker.projects.models import Project
 from datetime import date
 from django.contrib.auth.models import User
 
-class CreateTimesheetViewTests(TestCase):
+class TimesheetViewTests(TestCase):
     
     def setUp(self):        
         self.client = Client()
@@ -16,8 +16,8 @@ class CreateTimesheetViewTests(TestCase):
         p1.save()
         p2 = Project(name="project2",code="pj2")
         p2.save()
-  
-    def test_create_timesheet_submit(self):      
+        
+    def test_submit_timesheet(self):
         """
         Provided a validated TimesheetForm must create an entry in Timesheet table and an entry in TimesheetEntry table for each day 
         inserted with != 0 value
@@ -43,40 +43,41 @@ class CreateTimesheetViewTests(TestCase):
             'form-1-fri': u'0',
             'form-1-sat': u'0',
             'form-1-sun': u'0',
-             u'submit': [u'Submit timesheet']
+            u'submit': [u'Submit timesheet']
         }
-        #        csrf_client = Client(enforce_csrf_checks=True)
-        response = self.client.post(reverse('timesheet:create'), post_data, follow=True)
-        print response
+        response = self.client.post(reverse('timesheet:submit', kwargs={'year': 2013, 'week_number': 32}), post_data, follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(1, Timesheet.objects.count())
         self.assertEqual(3, TimeEntry.objects.count())
-        self.assertTemplateUsed(response, 'timesheet/index.html')
-        #self.assertQuerysetEqual(
-        #    response.context['latest_poll_list'],
-        #    ['<Poll: Past poll.>']
-        #)
+        self.assertTemplateUsed(response, 'timesheet/index.html')  
+  
+    def test_create_timesheet(self):      
+        """
+        Provided a validated TimesheetForm must create an entry in Timesheet table and an entry in TimesheetEntry table for each day 
+        inserted with != 0 value
+        """
+        self.client.login(username='john', password='johnpassword')
+        response = self.client.get(reverse('timesheet:create', kwargs={'year': 2013, 'week_number': 32}))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(1, Timesheet.objects.count())        
+        self.assertTemplateUsed(response, 'timesheet/timesheet_form.html')        
         
         
     def test_create_timesheet_get(self): 
         self.client.login(username='john', password='johnpassword')
-        response = self.client.get(reverse('timesheet:create'))
+        response = self.client.get(reverse('timesheet:create',kwargs={'year': 2013, 'week_number': 32}))
         self.assertEqual(response.status_code, 200)
 
-class TimesheetFormSetTests(TestCase):
-  
-    def test_first_day_of_this_week(self):
-      today = date(2013, 8, 29)
-      aspected_result = date(2013, 8, 26)
-      self.assertEqual(aspected_result, first_day_of_this_week(today))            
-    
-      
-class TimesheetFormTests(TestCase):
+class TimesheetFormsTests(TestCase):
     
     def setUp(self):
       self.user = User.objects.create_user('temporary', 'temporary@gmail.com', 'temporary')
       p = Project(name="project1",code="pj1")
       p.save()
+    
+    def test_first_day_of_this_week(self):
+      today = date(2013, 8, 29)
+      aspected_result = date(2013, 8, 26)
+      self.assertEqual(aspected_result, first_day_of_this_week(today))   
     
     def test_clean_true(self):
         post_data = {           
