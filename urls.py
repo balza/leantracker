@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -14,6 +14,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout'),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
     url(r'^timesheet/', include('timesheet.urls', namespace='timesheet', app_name='timesheet')),
 )
