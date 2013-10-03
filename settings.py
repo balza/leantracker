@@ -129,6 +129,7 @@ INSTALLED_APPS = (
 )
 
 LOGIN_URL = '/timesheet/'
+#LOGIN_REDIRECT_URL = '/timesheet/list/'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
