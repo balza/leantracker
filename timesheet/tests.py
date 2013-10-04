@@ -48,7 +48,7 @@ class TimesheetViewTests(TestCase):
         response = self.client.post(reverse('timesheet:submit', kwargs={'year': 2013, 'week_number': 32}), post_data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(3, TimeEntry.objects.count())
-        self.assertTemplateUsed(response, 'timesheet/index.html')  
+        self.assertTemplateUsed(response, 'timesheet/timesheet_list.html')
   
     def test_create_timesheet(self):      
         """

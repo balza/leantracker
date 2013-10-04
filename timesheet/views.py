@@ -54,7 +54,8 @@ def submit_timesheet(request, week_number, year):
 
 
 @login_required
-def create_timesheet(request, week_number, year):
+def load_timesheet(request, week_number, year):
+  # if exist a timesheet: load, if don't exist: create a new one
   TimesheetFormSet = formset_factory(TimesheetForm)
   formset = TimesheetFormSet()
   timesheet = Timesheet(week_number=week_number, year=year, status='W', user=request.user)
