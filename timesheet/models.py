@@ -9,21 +9,12 @@ TIMESHEET_STATUS = (
     ('A', 'Accepted'),
 )
 
-class TimeEntry(models.Model):
-    
-  project = models.ForeignKey(Project)  
-  hours = models.IntegerField()
-  user = models.ForeignKey(User)
-  reg_date = models.DateTimeField('Registration date')
-
-  def __unicode__(self):
-        return "For project %s the user %s in date %s worked %s" % (self.project, self.user, self.reg_date, self.hours)
-        
 class TimesheetManager(models.Manager):
 
-    def create_timesheet(self, start, end, user):
-        timesheet = self.create(start=start, end=end, status='W',user=user)        
+    def create_timesheet(self, year, week_number,  user):
+        timesheet = self.create(year=year,  week_number=week_number, status='W', user=user)
         return timesheet
+
 
 class Timesheet(models.Model):
     
@@ -33,7 +24,17 @@ class Timesheet(models.Model):
     user = models.ForeignKey(User)
  
     def __unicode__(self):
-        return "timesheet from %s to %s" % (self.start, self.end) 
+        return "timesheet for year %s, week number %s" % (self.year, self.week_number)
         
     objects = TimesheetManager()
-    
+
+class TimeEntry(models.Model):
+
+  project = models.ForeignKey(Project)
+  hours = models.IntegerField()
+  user = models.ForeignKey(User)
+  reg_date = models.DateTimeField('Registration date')
+  timesheet = models.ForeignKey(Timesheet)
+
+  def __unicode__(self):
+        return "For project %s the user %s in date %s worked %s hour" % (self.project, self.user, self.reg_date, self.hours)

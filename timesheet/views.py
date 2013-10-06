@@ -25,28 +25,35 @@ def submit_timesheet(request, week_number, year):
           fri = form.cleaned_data["fri"]
           sat = form.cleaned_data["sat"]
           sun = form.cleaned_data["sun"]
+          timesheet = Timesheet.objects.get(year=year, week_number=week_number, user=request.user)
           if mon != 0:
-            timeentry = TimeEntry(project=project, hours=mon, user=request.user, reg_date=monday)
+            timeentry = TimeEntry(project=project, hours=mon, user=request.user, reg_date=monday, timesheet=timesheet)
             timeentry.save()
           if tue != 0:
-            timeentry = TimeEntry(project=project, hours=tue, user=request.user, reg_date=monday + delta)
+            timeentry = TimeEntry(project=project, hours=tue, user=request.user, reg_date=monday + delta,
+                                  timesheet=timesheet)
             timeentry.save()
           if wed != 0:
-            timeentry = TimeEntry(project=project, hours=wed, user=request.user, reg_date=monday + 2 * delta)
+            timeentry = TimeEntry(project=project, hours=wed, user=request.user, reg_date=monday + 2 * delta,
+                                  timesheet=timesheet)
             timeentry.save()
           if thu != 0:
-            timeentry = TimeEntry(project=project, hours=thu, user=request.user, reg_date=monday + 3 * delta)
+            timeentry = TimeEntry(project=project, hours=thu, user=request.user, reg_date=monday + 3 * delta,
+                                  timesheet=timesheet)
             timeentry.save()
           if fri != 0:
-            timeentry = TimeEntry(project=project, hours=fri, user=request.user, reg_date=monday + 4 * delta)
+            timeentry = TimeEntry(project=project, hours=fri, user=request.user, reg_date=monday + 4 * delta,
+                                  timesheet=timesheet)
             timeentry.save()
           if sat != 0:
-            timeentry = TimeEntry(project=project, hours=sat, user=request.user, reg_date=monday + 5 * delta)
+            timeentry = TimeEntry(project=project, hours=sat, user=request.user, reg_date=monday + 5 * delta,
+                                  timesheet=timesheet)
             timeentry.save()
           if sun != 0:
-            timeentry = TimeEntry(project=project, hours=sun, user=request.user, reg_date=monday + 6 * delta)
+            timeentry = TimeEntry(project=project, hours=sun, user=request.user, reg_date=monday + 6 * delta,
+                                  timesheet=timesheet)
             timeentry.save()
-        return render_to_response('timesheet/index.html')
+        return render_to_response('timesheet/timesheet_list.html')
   else:
     formset = TimesheetFormSet()
   return render_to_response('timesheet/timesheet_form.html', {'formset': formset},
@@ -55,10 +62,22 @@ def submit_timesheet(request, week_number, year):
 
 @login_required
 def load_timesheet(request, week_number, year):
-  # if exist a timesheet: load, if don't exist: create a new one
+  timesheet = Timesheet.objects.get(week_number=week_number, year=year, user=request.user)
+  #static values
+  data = {
+    'form-INITIAL_FORMS': u'0',
+    'form-MIN_NUM_FORMS': u'',
+    'form-MAX_NUM_FORMS': u'',
+  }
+  #dynamic values
+  data['form-TOTAL_FORMS'] = u'1'
+  data['form-0-project'] = u'1'
+  data['form-0-fri'] = u'8'
+  for time_entry in timesheet.timeentry_set.all():
+    print time_entry
+
   TimesheetFormSet = formset_factory(TimesheetForm)
-  formset = TimesheetFormSet()
-  timesheet = Timesheet(week_number=week_number, year=year, status='W', user=request.user)
-  timesheet.save()
+  formset = TimesheetFormSet(data)
+  #Timesheet.objects.create_timesheet(week_number=week_number, year=year, user=request.user)
   return render_to_response('timesheet/timesheet_form.html', {'formset': formset},
                             context_instance=RequestContext(request))
