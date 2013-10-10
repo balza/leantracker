@@ -1,3 +1,4 @@
+from time import strftime
 from leantracker.timesheet.forms import TimesheetForm, week_start_date
 from leantracker.timesheet.models import TimeEntry, Timesheet
 from django.forms.formsets import formset_factory
@@ -5,6 +6,16 @@ from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from datetime import timedelta
+
+week_day = {
+    1: 'mon',
+    2: 'tue',
+    3: 'wed',
+    4: 'thu',
+    5: 'fri',
+    6: 'sat',
+    7: 'sun',
+}
 
 
 @login_required
@@ -70,12 +81,13 @@ def load_timesheet(request, week_number, year):
     'form-MAX_NUM_FORMS': u'',
   }
   #dynamic values
-  data['form-TOTAL_FORMS'] = u'1'
-  data['form-0-project'] = u'1'
-  data['form-0-fri'] = u'8'
-  for time_entry in timesheet.timeentry_set.all():
-    print time_entry
-
+  rows = timesheet.timeentry_set.all()
+  data['form-TOTAL_FORMS'] = u'' + str(rows.count()) + ''
+  i=0
+  for timeentry in rows:
+    data['form-' + str(i) + '-project'] = u'' + str(timeentry.project) + ''
+    data['form-' + str(i) + '-' + str(week_day[timeentry.reg_date.isoweekday()])] = u'' + str(timeentry.hours) + ''
+    i += 1
   TimesheetFormSet = formset_factory(TimesheetForm)
   formset = TimesheetFormSet(data)
   #Timesheet.objects.create_timesheet(week_number=week_number, year=year, user=request.user)

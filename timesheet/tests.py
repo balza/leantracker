@@ -66,6 +66,7 @@ class TimesheetViewTests(TestCase):
     Timesheet.objects.create_timesheet(year=2013, week_number=32, user=self.user)
     response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 32}))
     self.assertEqual(response.status_code, 200)
+    print response.context[-1]['formset']
     self.assertContains(response, 'name="form-0-fri" value="0"', 1, 200)
 
   def test_load_a_full_timesheet_get(self):
@@ -74,7 +75,7 @@ class TimesheetViewTests(TestCase):
     TimeEntry.objects.create(project=self.p1, hours=8, user=self.user, reg_date='2013-10-4', timesheet=timesheet)
     response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 40}))
     self.assertEqual(response.status_code, 200)
-    print response.context[-1]['formset']
+    #print response.context[-1]['formset']
     self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
 
 
