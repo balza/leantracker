@@ -1,6 +1,7 @@
 from django.db import models
 from leantracker.projects.models import Project
 from django.contrib.auth.models import User
+from datetime import date, timedelta
 
 TIMESHEET_STATUS = (
     ('W', 'Draft'),
@@ -22,11 +23,27 @@ class Timesheet(models.Model):
     year = models.IntegerField('Year of the timesheet')
     status = models.CharField(max_length=20, choices=TIMESHEET_STATUS, default=0)    
     user = models.ForeignKey(User)
- 
-    def __unicode__(self):
-        return "timesheet for year %s, week number %s" % (self.year, self.week_number)
+
+    @staticmethod
+    def week_start_date(year, week):
+        d = date(year, 1, 1)
+        delta_days = d.isoweekday() - 1
+        delta_weeks = week
+        if year == d.isocalendar()[0]:
+            delta_weeks -= 1
+        delta = timedelta(days=-delta_days, weeks=delta_weeks)
+        return d + delta
+
+    @staticmethod
+    def first_day_of_this_week(a_day):
+        year = a_day.isocalendar()[0]
+        week_number = a_day.isocalendar()[1]
+        return Timesheet.week_start_date(year, week_number)
         
     objects = TimesheetManager()
+
+    def __unicode__(self):
+        return "timesheet for year %s, week number %s" % (self.year, self.week_number)
 
 class TimeEntry(models.Model):
 
