@@ -86,6 +86,7 @@ def load_timesheet(request, week_number, year):
         'form-INITIAL_FORMS': u'0',
         'form-MIN_NUM_FORMS': u'',
         'form-MAX_NUM_FORMS': u'',
+        'form-0-project': u'1',
         'form-0-mon': u'0',
         'form-0-tue': u'0',
         'form-0-wed': u'0',
@@ -102,21 +103,16 @@ def load_timesheet(request, week_number, year):
     for timeentry in timeentries:
         project_index = 0
         for project in projects:
-            data['form-' + str(project_index) + '-project'] = u'' + str(project) + ''
-            for day in range(0, 6):
-                if timeentry.project == project:
-                    data['form-' + str(day) + '-' + str(week_day[day+1])] = u'' + str(timeentry.hours) + ''
+            data['form-' + str(project_index) + '-project'] = u'' + str(project.id) + ''
+            for day in range(1, 7):
+                print 'AAAA ' + str(timeentry.project.id) + ' ' + str(project.id) + ' ' + str(timeentry.project.id == project.id)  + ' ' + str(timeentry.reg_date.isoweekday())
+                if timeentry.project.id == project.id and day == timeentry.reg_date.isoweekday():
+                    print 'BBBB ' + str('form-' + str(project_index) + '-' + str(week_day[day])) + ' ' + str(timeentry.hours)
+                    data['form-' + str(project_index) + '-' + str(week_day[day])] = u'' + str(timeentry.hours) + ''
                 else:
-                    data['form-' + str(day) + '-' + str(week_day[day+1])] = u'0'
+                    print "CCC " + str(project_index)
+                    data['form-' + str(project_index) + '-' + str(week_day[day])] = u'0'
             project_index += 1
-
-    '''
-    project_index = 0
-    for timeentry in timeentries:
-      data['form-' + str(project_index) + '-project'] = u'' + str(timeentry.project) + ''
-      data['form-' + str(project_index) + '-' + str(week_day[timeentry.reg_date.isoweekday()])] = u'' + str(timeentry.hours) + ''
-      project_index += 1
-    '''
     timesheetFormSet = formset_factory(TimesheetForm)
     formset = timesheetFormSet(data)
     #Timesheet.objects.create_timesheet(week_number=week_number, year=year, user=request.user)
