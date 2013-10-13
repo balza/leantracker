@@ -96,23 +96,22 @@ def load_timesheet(request, week_number, year):
         'form-0-sun': u'0',
     }
     #dynamic values
+    #try:
     timeentries = timesheet.timeentry_set.all()
     projects = timeentries.order_by('project').distinct()
     data['form-TOTAL_FORMS'] = u'' + str(projects.count() + 1) + ''
-    print 'project count :' + str(projects.count())
-    for timeentry in timeentries:
-        project_index = 0
-        for project in projects:
-            data['form-' + str(project_index) + '-project'] = u'' + str(project.id) + ''
-            for day in range(1, 7):
-                print 'AAAA ' + str(timeentry.project.id) + ' ' + str(project.id) + ' ' + str(timeentry.project.id == project.id)  + ' ' + str(timeentry.reg_date.isoweekday())
+    project_index = 0
+    for project in projects:
+        data['form-' + str(project_index) + '-project'] = u'' + str(project.id) + ''
+        for day in range(1, 7):
+            hours = 0
+            for timeentry in timeentries:
                 if timeentry.project.id == project.id and day == timeentry.reg_date.isoweekday():
-                    print 'BBBB ' + str('form-' + str(project_index) + '-' + str(week_day[day])) + ' ' + str(timeentry.hours)
-                    data['form-' + str(project_index) + '-' + str(week_day[day])] = u'' + str(timeentry.hours) + ''
-                else:
-                    print "CCC " + str(project_index)
-                    data['form-' + str(project_index) + '-' + str(week_day[day])] = u'0'
-            project_index += 1
+                     hours = timeentry.hours
+            data['form-' + str(project_index) + '-' + str(week_day[day])] = u'' + str(hours) + ''
+        project_index += 1
+    #except:
+        #pass
     timesheetFormSet = formset_factory(TimesheetForm)
     formset = timesheetFormSet(data)
     #Timesheet.objects.create_timesheet(week_number=week_number, year=year, user=request.user)

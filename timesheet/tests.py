@@ -81,7 +81,6 @@ class TimesheetViewTests(TestCase):
         #print response.context[-1]['formset']
         self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
 
-
     '''
     def test_load_a_full_timesheet_duplicate_project_get(self):
         self.client.login(username='john', password='johnpassword')
@@ -92,19 +91,19 @@ class TimesheetViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         #print response.context[-1]['formset']
         self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
-
+    '''
 
     def test_load_a_full_timesheet_with_more_projects_get(self):
         self.client.login(username='john', password='johnpassword')
-        timesheet = Timesheet.objects.create_timesheet(year=2013, week_number=40, user=self.user)
+        timesheet = Timesheet.objects.create_timesheet(year=2013, week_number=39, user=self.user)
         TimeEntry.objects.create(project=self.p1, hours=8, user=self.user, reg_date='2013-10-4', timesheet=timesheet)
         TimeEntry.objects.create(project=self.p2, hours=4, user=self.user, reg_date='2013-10-3', timesheet=timesheet)
-        response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 40}))
+        response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 39}))
         self.assertEqual(response.status_code, 200)
         #print response.context[-1]['formset']
         self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
         self.assertContains(response, 'name="form-1-thu" value="4"', 1, 200)
-    '''
+
 
 class TimesheetFormsTests(TestCase):
     def setUp(self):
