@@ -47,12 +47,16 @@ class TimesheetViewTests(TestCase):
             u'submit': [u'Submit timesheet']
         }
         Timesheet.objects.create_timesheet(year=2013, week_number=32, user=self.user)
-        response = self.client.post(reverse('timesheet:submit', kwargs={'year': 2013, 'week_number': 32}), post_data,
+        response = self.client.post(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 32}), post_data,
                                     follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(3, TimeEntry.objects.count())
         self.assertTemplateUsed(response, 'timesheet/timesheet_list.html')
 
+    def test_load_a_new_timesheet(self):
+        self.client.login(username='john', password='johnpassword')
+        response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 32}))
+        self.assertEqual(response.status_code, 200)
 
     def test_load_timesheet(self):
         self.client.login(username='john', password='johnpassword')
@@ -131,7 +135,6 @@ class TimesheetFormsTests(TestCase):
             'project': u'1',
             'mon': u'0',
             'tue': u'0',
-            'wed': u'0',
             'wed': u'0',
             'thu': u'0',
             'fri': u'0',

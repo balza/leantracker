@@ -20,9 +20,11 @@ week_day = {
 
 
 @login_required
-def submit_timesheet(request, week_number, year):
+def timesheet(request, week_number, year):
+    print "submit_timesheet"
     TimesheetFormSet = formset_factory(TimesheetForm)
     if request.method == 'POST':
+        print "POST"
         formset = TimesheetFormSet(request.POST, request.FILES)
         if 'submit' in request.POST:
             if formset.is_valid():
@@ -37,7 +39,8 @@ def submit_timesheet(request, week_number, year):
                     fri = form.cleaned_data["fri"]
                     sat = form.cleaned_data["sat"]
                     sun = form.cleaned_data["sun"]
-                    timesheet = Timesheet.objects.get(year=year, week_number=week_number, user=request.user)
+                    timesheet = Timesheet(year=year, week_number=week_number, user=request.user)
+                    timesheet.save()
                     if mon != 0:
                         timeentry = TimeEntry(project=project, hours=mon, user=request.user, reg_date=monday,
                                               timesheet=timesheet)
@@ -73,15 +76,15 @@ def submit_timesheet(request, week_number, year):
                         timeentry.save()
                 return render_to_response('timesheet/timesheet_list.html')
     else:
-        formset = TimesheetFormSet()
+        #formset = TimesheetFormSet()
+        formset = load_timesheet(request, week_number, year)
     return render_to_response('timesheet/timesheet_form.html', {'formset': formset},
                               context_instance=RequestContext(request))
 
 
 @login_required
 def load_timesheet(request, week_number, year):
-    timesheet = Timesheet.objects.get(week_number=week_number, year=year, user=request.user)
-    #static values
+    print "load_timesheet"
     data = {
         'form-INITIAL_FORMS': u'0',
         'form-MIN_NUM_FORMS': u'',
@@ -95,25 +98,27 @@ def load_timesheet(request, week_number, year):
         'form-0-sat': u'0',
         'form-0-sun': u'0',
     }
-    #dynamic values
-    #try:
-    timeentries = timesheet.timeentry_set.all()
-    projects = timeentries.order_by('project').distinct()
-    data['form-TOTAL_FORMS'] = u'' + str(projects.count() + 1) + ''
-    project_index = 0
-    for project in projects:
-        data['form-' + str(project_index) + '-project'] = u'' + str(project.id) + ''
-        for day in range(1, 7):
-            hours = 0
-            for timeentry in timeentries:
-                if timeentry.project.id == project.id and day == timeentry.reg_date.isoweekday():
-                     hours = timeentry.hours
-            data['form-' + str(project_index) + '-' + str(week_day[day])] = u'' + str(hours) + ''
-        project_index += 1
-    #except:
-        #pass
-    timesheetFormSet = formset_factory(TimesheetForm)
-    formset = timesheetFormSet(data)
-    #Timesheet.objects.create_timesheet(week_number=week_number, year=year, user=request.user)
-    return render_to_response('timesheet/timesheet_form.html', {'formset': formset},
-                              context_instance=RequestContext(request))
+    try:
+        timesheet = Timesheet.objects.get(week_number=week_number, year=year, user=request.user)
+        timeentries = timesheet.timeentry_set.all()
+        projects = timeentries.order_by('project').distinct()
+        data['form-TOTAL_FORMS'] = u'' + str(projects.count() + 1) + ''
+        project_index = 0
+        for project in projects:
+            data['form-' + str(project_index) + '-project'] = u'' + str(project.id) + ''
+            for day in range(1, 7):
+                hours = 0
+                for timeentry in timeentries:
+                    if timeentry.project.id == project.id and day == timeentry.reg_date.isoweekday():
+                        hours = timeentry.hours
+                data['form-' + str(project_index) + '-' + str(week_day[day])] = u'' + str(hours) + ''
+            project_index += 1
+        timesheetFormSet = formset_factory(TimesheetForm)
+        return timesheetFormSet(data)
+    except Timesheet.DoesNotExist:
+        #print type(inst)
+        data['form-TOTAL_FORMS'] = u'1'
+        timesheetFormSet = formset_factory(TimesheetForm)
+        return timesheetFormSet()
+    #return render_to_response('timesheet/timesheet_form.html', {'formset': formset},
+    #                          context_instance=RequestContext(request))

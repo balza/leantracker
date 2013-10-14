@@ -1,8 +1,10 @@
 from django.conf.urls import *
 from django.views.generic import ListView
-from leantracker.timesheet.models import Timesheet
-from leantracker.timesheet.views import load_timesheet, submit_timesheet
 from django.contrib.auth.decorators import login_required
+
+from leantracker.timesheet.models import Timesheet
+from leantracker.timesheet.views import timesheet
+
 
 # Important: authentication, as often in django, It's a little bit alien for a java programmer,
 # seems .html pages mix responsabilities with url.py
@@ -16,9 +18,7 @@ urlpatterns = patterns('',
                                queryset=Timesheet.objects.order_by('-id')[:5],
                                context_object_name='timesheet_list',
                            )),
-                           name="list",
-                       ),
-                       url(r'^load/(?P<year>\d+)/(?P<week_number>\d+)/$', load_timesheet, name="load"),
-                       url(r'^submit/(?P<year>\d+)/(?P<week_number>\d+)/$', submit_timesheet, name="submit"),
+                           name="list"),
+                       url(r'^load/(?P<year>\d+)/(?P<week_number>\d+)/$', timesheet, name="load"),
 )
 
