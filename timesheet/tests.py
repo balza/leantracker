@@ -18,7 +18,7 @@ class TimesheetViewTests(TestCase):
         self.p2 = Project(name="project2", code="pj2")
         self.p2.save()
 
-    def test_submit_timesheet(self):
+    def test_submit_timesheet_post(self):
         """
         Provided a validated TimesheetForm must create an entry in Timesheet table and an entry in TimesheetEntry table for each day
         inserted with != 0 value
@@ -75,7 +75,6 @@ class TimesheetViewTests(TestCase):
         self.assertContains(response, 'name="form-0-mon" value="0"', 1, 200)
         self.assertContains(response, 'name="form-0-fri" value="0"', 1, 200)
 
-
     def test_load_a_full_timesheet_get(self):
         self.client.login(username='john', password='johnpassword')
         timesheet = Timesheet.objects.create_timesheet(year=2013, week_number=40, user=self.user)
@@ -86,6 +85,7 @@ class TimesheetViewTests(TestCase):
         self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
 
     '''
+    TODO
     def test_load_a_full_timesheet_duplicate_project_get(self):
         self.client.login(username='john', password='johnpassword')
         timesheet = Timesheet.objects.create_timesheet(year=2013, week_number=40, user=self.user)
@@ -107,6 +107,42 @@ class TimesheetViewTests(TestCase):
         #print response.context[-1]['formset']
         self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
         self.assertContains(response, 'name="form-1-thu" value="4"', 1, 200)
+
+    def test_update_an_existing_timesheet_post(self):
+        print "test_update_an_existing_timesheet_post"
+        self.client.login(username='john', password='johnpassword')
+        timesheet = Timesheet.objects.create_timesheet(year=2013, week_number=40, user=self.user)
+        print "test timeentry for " + str(timesheet)
+        TimeEntry.objects.create(project=self.p2, hours=4, user=self.user, reg_date='2013-10-3', timesheet=timesheet)
+        post_data = {
+            'form-TOTAL_FORMS': u'2',
+            'form-INITIAL_FORMS': u'0',
+            'form-MAX_NUM_FORMS': u'',
+            'form-0-project': u'1',
+            'form-0-mon': u'0',
+            'form-0-tue': u'8',
+            'form-0-wed': u'0',
+            'form-0-thu': u'0',
+            'form-0-fri': u'0',
+            'form-0-sat': u'0',
+            'form-0-sun': u'0',
+            'form-1-project': u'2',
+            'form-1-mon': u'0',
+            'form-1-tue': u'8',
+            'form-1-wed': u'8',
+            'form-1-thu': u'0',
+            'form-1-fri': u'0',
+            'form-1-sat': u'0',
+            'form-1-sun': u'0',
+            u'submit': [u'Submit timesheet']
+        }
+        response = self.client.post(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 40}), post_data,
+                                    follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(4, TimeEntry.objects.filter(reg_date__range=(date(2013, 9, 30), date(2013, 10, 6))).count())
+        self.assertEqual(4, timesheet.timeentry_set.count())
+        self.assertTemplateUsed(response, 'timesheet/timesheet_list.html')
+        print "fine test_update_an_existing_timesheet_post"
 
 
 class TimesheetFormsTests(TestCase):

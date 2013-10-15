@@ -1,4 +1,4 @@
-from django.forms.formsets import formset_factory
+import django.forms.formsets
 from django.template.context import RequestContext
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
@@ -22,61 +22,31 @@ week_day = {
 @login_required
 def timesheet(request, week_number, year):
     print "submit_timesheet"
-    TimesheetFormSet = formset_factory(TimesheetForm)
+    TimesheetFormSet = django.forms.formsets.formset_factory(TimesheetForm)
     if request.method == 'POST':
-        print "POST"
         formset = TimesheetFormSet(request.POST, request.FILES)
         if 'submit' in request.POST:
             if formset.is_valid():
                 monday = Timesheet.week_start_date(int(year), int(week_number))
                 delta = timedelta(days=1)
+                try:
+                    readed_timesheet = Timesheet.objects.get(year=year, week_number=week_number, user=request.user)
+                    timesheet = Timesheet(id=readed_timesheet.id, year=year, week_number=week_number, user=request.user)
+                except Exception as inst:
+                    print "not found " + str(inst)
+                    timesheet = Timesheet(year=year, week_number=week_number, user=request.user)
+                timesheet.save()
                 for form in formset:
                     project = form.cleaned_data["project"]
-                    mon = form.cleaned_data["mon"]
-                    tue = form.cleaned_data["tue"]
-                    wed = form.cleaned_data["wed"]
-                    thu = form.cleaned_data["thu"]
-                    fri = form.cleaned_data["fri"]
-                    sat = form.cleaned_data["sat"]
-                    sun = form.cleaned_data["sun"]
-                    timesheet = Timesheet(year=year, week_number=week_number, user=request.user)
-                    timesheet.save()
-                    if mon != 0:
-                        timeentry = TimeEntry(project=project, hours=mon, user=request.user, reg_date=monday,
-                                              timesheet=timesheet)
-                        timeentry.save()
-                    if tue != 0:
-                        timeentry = TimeEntry(project=project, hours=tue, user=request.user, reg_date=monday + delta,
-                                              timesheet=timesheet)
-                        timeentry.save()
-                    if wed != 0:
-                        timeentry = TimeEntry(project=project, hours=wed, user=request.user,
-                                              reg_date=monday + 2 * delta,
-                                              timesheet=timesheet)
-                        timeentry.save()
-                    if thu != 0:
-                        timeentry = TimeEntry(project=project, hours=thu, user=request.user,
-                                              reg_date=monday + 3 * delta,
-                                              timesheet=timesheet)
-                        timeentry.save()
-                    if fri != 0:
-                        timeentry = TimeEntry(project=project, hours=fri, user=request.user,
-                                              reg_date=monday + 4 * delta,
-                                              timesheet=timesheet)
-                        timeentry.save()
-                    if sat != 0:
-                        timeentry = TimeEntry(project=project, hours=sat, user=request.user,
-                                              reg_date=monday + 5 * delta,
-                                              timesheet=timesheet)
-                        timeentry.save()
-                    if sun != 0:
-                        timeentry = TimeEntry(project=project, hours=sun, user=request.user,
-                                              reg_date=monday + 6 * delta,
-                                              timesheet=timesheet)
-                        timeentry.save()
-                return render_to_response('timesheet/timesheet_list.html')
+                    for i in range(1, 7):
+                        hours = form.cleaned_data[week_day[i]]
+                        if hours != 0:
+                            timeentry = TimeEntry(project=project, hours=hours, user=request.user,
+                                                  reg_date=monday + ((i - 1) * delta),
+                                                  timesheet=timesheet)
+                            timeentry.save()
+            return render_to_response('timesheet/timesheet_list.html')
     else:
-        #formset = TimesheetFormSet()
         formset = load_timesheet(request, week_number, year)
     return render_to_response('timesheet/timesheet_form.html', {'formset': formset},
                               context_instance=RequestContext(request))
@@ -113,12 +83,9 @@ def load_timesheet(request, week_number, year):
                         hours = timeentry.hours
                 data['form-' + str(project_index) + '-' + str(week_day[day])] = u'' + str(hours) + ''
             project_index += 1
-        timesheetFormSet = formset_factory(TimesheetForm)
+        timesheetFormSet = django.forms.formsets.formset_factory(TimesheetForm)
         return timesheetFormSet(data)
     except Timesheet.DoesNotExist:
-        #print type(inst)
         data['form-TOTAL_FORMS'] = u'1'
-        timesheetFormSet = formset_factory(TimesheetForm)
+        timesheetFormSet = django.forms.formsets.formset_factory(TimesheetForm)
         return timesheetFormSet()
-    #return render_to_response('timesheet/timesheet_form.html', {'formset': formset},
-    #                          context_instance=RequestContext(request))
