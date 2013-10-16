@@ -21,7 +21,6 @@ week_day = {
 
 @login_required
 def timesheet(request, week_number, year):
-    print "submit_timesheet"
     TimesheetFormSet = django.forms.formsets.formset_factory(TimesheetForm)
     if request.method == 'POST':
         formset = TimesheetFormSet(request.POST, request.FILES)
@@ -54,7 +53,6 @@ def timesheet(request, week_number, year):
 
 @login_required
 def load_timesheet(request, week_number, year):
-    print "load_timesheet"
     data = {
         'form-INITIAL_FORMS': u'0',
         'form-MIN_NUM_FORMS': u'',
@@ -72,7 +70,10 @@ def load_timesheet(request, week_number, year):
         timesheet = Timesheet.objects.get(week_number=week_number, year=year, user=request.user)
         timeentries = timesheet.timeentry_set.all()
         projects = timeentries.order_by('project').distinct()
-        data['form-TOTAL_FORMS'] = u'' + str(projects.count() + 1) + ''
+        if projects.count() == 0:
+            data['form-TOTAL_FORMS'] = u'1'
+        else:
+            data['form-TOTAL_FORMS'] = u'' + str(projects.count()) + ''
         project_index = 0
         for project in projects:
             data['form-' + str(project_index) + '-project'] = u'' + str(project.id) + ''
