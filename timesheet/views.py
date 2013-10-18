@@ -1,6 +1,6 @@
 import django.forms.formsets
 from django.template.context import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
 from datetime import timedelta
 
@@ -25,9 +25,8 @@ def timesheet(request, week_number, year):
     if request.method == 'POST':
         formset = TimesheetFormSet(request.POST, request.FILES)
         if 'submit' in request.POST:
+            print "POST " + str(formset.is_valid())
             if formset.is_valid():
-                monday = Timesheet.week_start_date(int(year), int(week_number))
-                delta = timedelta(days=1)
                 try:
                     readed_timesheet = Timesheet.objects.get(year=year, week_number=week_number, user=request.user)
                     timesheet = Timesheet(id=readed_timesheet.id, year=year, week_number=week_number, user=request.user)
@@ -35,21 +34,37 @@ def timesheet(request, week_number, year):
                     print "not found " + str(inst)
                     timesheet = Timesheet(year=year, week_number=week_number, user=request.user)
                 timesheet.save()
+                print "timesheet.save"
                 for form in formset:
+                    print "form"
                     project = form.cleaned_data["project"]
+                    monday = Timesheet.week_start_date(int(year), int(week_number))
+                    delta = timedelta(days=1)
                     for i in range(1, 7):
                         hours = form.cleaned_data[week_day[i]]
+                        print "hours"
                         if hours != 0:
-                            timeentry = TimeEntry(project=project, hours=hours, user=request.user,
-                                                  reg_date=monday + ((i - 1) * delta),
-                                                  timesheet=timesheet)
+                            print "save"
+                            try:
+                                readed_timesheet = TimeEntry.objects.get(project=project,
+                                                                         user=request.user,
+                                                                         reg_date=monday + ((i - 1) * delta),
+                                                                         timesheet=timesheet)
+                                timeentry = TimeEntry(id=readed_timesheet.id, project=project, hours=hours,
+                                                      user=request.user,
+                                                      reg_date=monday + ((i - 1) * delta),
+                                                      timesheet=timesheet)
+                            except Exception as inst:
+                                print "not found " + str(inst)
+                                timeentry = TimeEntry(project=project, hours=hours, user=request.user,
+                                                      reg_date=monday + ((i - 1) * delta),
+                                                      timesheet=timesheet)
                             timeentry.save()
-            return render_to_response('timesheet/timesheet_list.html')
+            return redirect('timesheet:list')
     else:
         formset = load_timesheet(request, week_number, year)
     return render_to_response('timesheet/timesheet_form.html', {'formset': formset},
                               context_instance=RequestContext(request))
-
 
 @login_required
 def load_timesheet(request, week_number, year):
@@ -69,18 +84,19 @@ def load_timesheet(request, week_number, year):
     try:
         timesheet = Timesheet.objects.get(week_number=week_number, year=year, user=request.user)
         timeentries = timesheet.timeentry_set.all()
-        projects = timeentries.order_by('project').distinct()
-        if projects.count() == 0:
+        projects = timeentries.values('project').distinct()
+        number_of_projects = timeentries.values('project').distinct().count()
+        if number_of_projects == 0:
             data['form-TOTAL_FORMS'] = u'1'
         else:
-            data['form-TOTAL_FORMS'] = u'' + str(projects.count()) + ''
+            data['form-TOTAL_FORMS'] = u'' + str(number_of_projects) + ''
         project_index = 0
         for project in projects:
-            data['form-' + str(project_index) + '-project'] = u'' + str(project.id) + ''
+            data['form-' + str(project_index) + '-project'] = u'' + str(project['project']) + ''
             for day in range(1, 7):
                 hours = 0
                 for timeentry in timeentries:
-                    if timeentry.project.id == project.id and day == timeentry.reg_date.isoweekday():
+                    if timeentry.project.id == project['project'] and day == timeentry.reg_date.isoweekday():
                         hours = timeentry.hours
                 data['form-' + str(project_index) + '-' + str(week_day[day])] = u'' + str(hours) + ''
             project_index += 1

@@ -61,23 +61,23 @@ class TimesheetViewTests(TestCase):
 
     def test_load_timesheet(self):
         self.client.login(username='john', password='johnpassword')
-        Timesheet.objects.create_timesheet(year=2013, week_number=32, user=self.user)
+        timesheet = Timesheet.objects.create_timesheet(year=2013, week_number=32, user=self.user)
         response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 32}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(1, Timesheet.objects.count())
         self.assertTemplateUsed(response, 'timesheet/timesheet_form.html')
+        self.assertEqual(0, timesheet.timeentry_set.count())
 
     def test_load_an_empty_timesheet_get(self):
         self.client.login(username='john', password='johnpassword')
-        Timesheet.objects.create_timesheet(year=2013, week_number=32, user=self.user)
+        timesheet = Timesheet.objects.create_timesheet(year=2013, week_number=32, user=self.user)
         response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 32}))
         self.assertEqual(response.status_code, 200)
         #print response.context[-1]['formset']
         self.assertContains(response, 'name="form-0-mon" value="0"', 1, 200)
         self.assertContains(response, 'name="form-0-fri" value="0"', 1, 200)
         self.assertNotContains(response, 'name="form-1-thu"')
-
-
+        self.assertEqual(0, timesheet.timeentry_set.count())
 
     def test_load_a_full_timesheet_get(self):
         self.client.login(username='john', password='johnpassword')
@@ -88,6 +88,7 @@ class TimesheetViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
         self.assertNotContains(response, 'name="form-1-thu"')
+        self.assertEqual(1, timesheet.timeentry_set.count())
 
     '''
     TODO
@@ -114,11 +115,13 @@ class TimesheetViewTests(TestCase):
         self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
         self.assertContains(response, 'name="form-1-thu" value="4"', 1, 200)
         self.assertNotContains(response, 'name="form-2-thu"')
+        self.assertEqual(2, timesheet.timeentry_set.count())
 
 
     def test_update_an_existing_timesheet_post(self):
         self.client.login(username='john', password='johnpassword')
         timesheet = Timesheet.objects.create_timesheet(year=2013, week_number=40, user=self.user)
+        # 2013-10-3 was a thu ;-)
         TimeEntry.objects.create(project=self.p2, hours=4, user=self.user, reg_date='2013-10-3', timesheet=timesheet)
         post_data = {
             'form-TOTAL_FORMS': u'2',
@@ -148,8 +151,6 @@ class TimesheetViewTests(TestCase):
         self.assertEqual(4, TimeEntry.objects.filter(reg_date__range=(date(2013, 9, 30), date(2013, 10, 6))).count())
         self.assertEqual(4, timesheet.timeentry_set.count())
         self.assertTemplateUsed(response, 'timesheet/timesheet_list.html')
-
-
 
 class TimesheetFormsTests(TestCase):
     def setUp(self):
