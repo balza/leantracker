@@ -25,26 +25,22 @@ def timesheet(request, week_number, year):
     if request.method == 'POST':
         formset = TimesheetFormSet(request.POST, request.FILES)
         if 'submit' in request.POST:
-            print "POST " + str(formset.is_valid())
             if formset.is_valid():
                 try:
                     readed_timesheet = Timesheet.objects.get(year=year, week_number=week_number, user=request.user)
-                    timesheet = Timesheet(id=readed_timesheet.id, year=year, week_number=week_number, user=request.user)
+                    readed_timesheet.delete()
+                    timesheet = Timesheet(year=year, week_number=week_number, user=request.user)
                 except Exception as inst:
                     print "not found " + str(inst)
                     timesheet = Timesheet(year=year, week_number=week_number, user=request.user)
                 timesheet.save()
-                print "timesheet.save"
                 for form in formset:
-                    print "form"
                     project = form.cleaned_data["project"]
                     monday = Timesheet.week_start_date(int(year), int(week_number))
                     delta = timedelta(days=1)
                     for i in range(1, 7):
                         hours = form.cleaned_data[week_day[i]]
-                        print "hours"
                         if hours != 0:
-                            print "save"
                             try:
                                 readed_timesheet = TimeEntry.objects.get(project=project,
                                                                          user=request.user,

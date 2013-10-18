@@ -7,6 +7,7 @@ from django.utils.safestring import mark_safe
 
 
 class TimesheetForm(Form):
+
     #TODO: filtrare solo per il gruppo dell'utente
     project = forms.ModelChoiceField(required=False, queryset=Project.objects.all(), empty_label="-------")
     delta = timedelta(days=1)
@@ -21,9 +22,11 @@ class TimesheetForm(Form):
     
     '''
     def __init__(self, *args, **kwargs):
-        self._user = kwargs.pop('user')
+        self._week_number = kwargs.pop('week_number')
+        self._year = kwargs.pop('year')
         super(TimesheetForm, self).__init__(*args, **kwargs)
     '''
+
          
     def clean(self): 
         cleaned_data = super(TimesheetForm, self).clean()          

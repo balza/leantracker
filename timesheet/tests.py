@@ -111,7 +111,7 @@ class TimesheetViewTests(TestCase):
         TimeEntry.objects.create(project=self.p2, hours=4, user=self.user, reg_date='2013-10-3', timesheet=timesheet)
         response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 39}))
         self.assertEqual(response.status_code, 200)
-        print response.context[-1]['formset']
+        #print response.context[-1]['formset']
         self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
         self.assertContains(response, 'name="form-1-thu" value="4"', 1, 200)
         self.assertNotContains(response, 'name="form-2-thu"')
@@ -148,8 +148,34 @@ class TimesheetViewTests(TestCase):
         response = self.client.post(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 40}), post_data,
                                     follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(4, TimeEntry.objects.filter(reg_date__range=(date(2013, 9, 30), date(2013, 10, 6))).count())
-        self.assertEqual(4, timesheet.timeentry_set.count())
+        self.assertEqual(3, TimeEntry.objects.filter(reg_date__range=(date(2013, 9, 30), date(2013, 10, 6))).count())
+        self.assertEqual(3, timesheet.timeentry_set.count())
+        self.assertTemplateUsed(response, 'timesheet/timesheet_list.html')
+
+    def test_delete_an_existing_timesheet_post(self):
+        self.client.login(username='john', password='johnpassword')
+        timesheet = Timesheet.objects.create_timesheet(year=2013, week_number=40, user=self.user)
+        # 2013-10-3 was a thu ;-)
+        TimeEntry.objects.create(project=self.p2, hours=4, user=self.user, reg_date='2013-10-3', timesheet=timesheet)
+        post_data = {
+            'form-TOTAL_FORMS': u'1',
+            'form-INITIAL_FORMS': u'0',
+            'form-MAX_NUM_FORMS': u'',
+            'form-0-project': u'1',
+            'form-0-mon': u'0',
+            'form-0-tue': u'8',
+            'form-0-wed': u'0',
+            'form-0-thu': u'0',
+            'form-0-fri': u'0',
+            'form-0-sat': u'0',
+            'form-0-sun': u'0',
+            u'submit': [u'Submit timesheet']
+        }
+        response = self.client.post(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 40}), post_data,
+                                    follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(1, TimeEntry.objects.filter(reg_date__range=(date(2013, 9, 30), date(2013, 10, 6))).count())
+        self.assertEqual(1, timesheet.timeentry_set.count())
         self.assertTemplateUsed(response, 'timesheet/timesheet_list.html')
 
 class TimesheetFormsTests(TestCase):
