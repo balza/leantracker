@@ -11,7 +11,7 @@
                     $(".calendar").datepicker({
                         showWeek: true,
                         onSelect: function(dateText, inst) {
-                            var url_mask = "{% url timesheet:load year=12345 week_number=54321%}";
+                            var url_mask = "{% url 'timesheet:load' year=12345 week_number=54321%}";
                             var date = $(this).datepicker('getDate'),
                                 year =  date.getFullYear();
                             url_mask = url_mask.replace(/12345/, year);
@@ -23,7 +23,7 @@
                     //Timesheet list
                     {% if timesheet_list %}
                         {% for timesheet in timesheet_list %}
-                            var url_mask = "{% url timesheet:load year=12345 week_number=54321%}";
+                            var url_mask = "{% url 'timesheet:load' year=12345 week_number=54321%}";
                             url_mask = url_mask.replace(/12345/, {{ timesheet.year }});
                             url_mask = url_mask.replace(/54321/, {{ timesheet.week_number }});
                             $("#timesheet ul").append('<li><a href="' + url_mask + '"><span class="tab">Week number {{ timesheet.week_number }} Year {{ timesheet.year }}</span></a></li>');
