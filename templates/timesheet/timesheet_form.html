@@ -47,21 +47,36 @@
         }
     </style>
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.js"></script>
     <script type="text/javascript">
         //<![CDATA[
               $(document).ready(function() {
-                  year = 2013
-                  week = 39
-                  var d = new Date(year, 0, 1);
-                  var days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-                  d.setDate(d.getDate() + (week * 7));
-                  var headerDate = '<tr><th>Project</th>';
-                  for (var i=0; i<=6; i++){
-                    headerDate+='<th>' + d  + '</th>';
-                    d.setDate(d.getDate() + 1);
+                  composeHeader();
+                  /*
+                    http://stackoverflow.com/questions/8803151/how-to-get-first-day-and-last-day-of-the-week-number-and-year
+                  */
+                  function composeHeader(){
+                      var query_string = {};
+                      var query = window.location.href;
+                      year = query.substr(query.length - 8, 4);
+                      week = query.substr(query.length - 3, 2);
+                      alert(query);
+                      alert("year " + year);
+                      alert("week " + week);
+                      var d = new Date("Jan 01, " + year + " 01:00:00");
+                      var w = d.getTime() + 604800000 * (week - 1);
+                      var dayOfTheWeek = new Date(w);
+                      var headerDate = '<tr><th>Project</th>';
+                      for (var i=0; i<=6; i++){
+                        myDate = $.datepicker.formatDate('yy-mm-dd', dayOfTheWeek);
+                        headerDate+='<th>' + myDate +'</th>';
+                        dayOfTheWeek.setDate(dayOfTheWeek.getDate() + 1);
+                      }
+                      headerDate+='</tr>';
+                      $("#headerDate").append(headerDate);
                   }
-                  headerDate+='</tr>';
-                  $("#headerDate").append(headerDate);
+
+
                   // Code adapted from http://djangosnippets.org/snippets/1389/
 
                   function updateElementIndex(el, prefix, ndx) {
