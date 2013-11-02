@@ -10,12 +10,12 @@
                 $(window).load(function(){
                     $(".calendar").datepicker({
                         showWeek: true,
+                        firstDay: 1,
                         onSelect: function(dateText, inst) {
                             var url_mask = "{% url 'timesheet:load' year=12345 week_number=54321%}";
                             var date = $(this).datepicker('getDate'),
                                 year =  date.getFullYear();
                             url_mask = url_mask.replace(/12345/, year);
-                            alert(dateText);
                             url_mask = url_mask.replace(/54321/, $.datepicker.iso8601Week(new Date(dateText)));
                             window.location = url_mask
                         }
