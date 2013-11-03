@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'projects',
     'timesheet',
+    'holidayplanner',
 )
 
 LOGIN_URL = '/timesheet/'
@@ -141,9 +142,15 @@ LOGIN_URL = '/timesheet/'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+     'require_debug_false': {
+         '()': 'django.utils.log.RequireDebugFalse'
+        }
+     },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
+            'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         }
     },
