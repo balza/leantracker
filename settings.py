@@ -128,7 +128,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'projects',
     'timesheet',
-    'holidayplanner',
+    'holidaysplanner',
 )
 
 LOGIN_URL = '/timesheet/'

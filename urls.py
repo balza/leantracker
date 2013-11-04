@@ -17,5 +17,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', 'django.contrib.auth.views.login', name="home"),
+    url(r'^logout/$', 'django.contrib.auth.views.logout'),
     url(r'^timesheet/', include('timesheet.urls', namespace='timesheet', app_name='timesheet')),
+    url(r'^holidaysplanner/', include('holidaysplanner.urls', namespace='holidaysplanner', app_name='holidaysplanner')),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

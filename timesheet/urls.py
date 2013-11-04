@@ -11,8 +11,6 @@ from leantracker.timesheet.views import timesheet
 #   ref https://docs.djangoproject.com/en/1.5/topics/auth/default/#module-django.contrib.auth.views
 
 urlpatterns = patterns('',
-                       url(r'^$', 'django.contrib.auth.views.login', name="home"),
-                       url(r'^logout/$', 'django.contrib.auth.views.logout'),
                        url(r'^list/$',
                            login_required(ListView.as_view(
                                queryset=Timesheet.objects.order_by('-id')[:5],
