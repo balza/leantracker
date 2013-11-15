@@ -48,7 +48,7 @@
 			editable: true,
 			droppable: true, // this allows things to be dropped onto the calendar !!!
 			drop: function(date, allDay) { // this function is called when something is dropped
-
+                 alert("drop" + date);
 				// retrieve the dropped element's stored Event Object
 				var originalEventObject = $(this).data('eventObject');
 
@@ -68,8 +68,41 @@
 					// if so, remove the element from the "Draggable Events" list
 					$(this).remove();
 				}
+			},
+			editable: true,
+            eventDrop: function(event,dayDelta,minuteDelta,allDay,revertFunc) {
 
-			}
+                alert(
+                    event.title + " was moved " +
+                    dayDelta + " days and " +
+                    minuteDelta + " minutes."
+                );
+
+                if (allDay) {
+                    alert("Event is now all-day");
+                }else{
+                    alert("Event has a time-of-day");
+                }
+
+                if (!confirm("Are you sure about this change?")) {
+                    revertFunc();
+                }
+
+            },
+
+            eventResize: function(event,dayDelta,minuteDelta,revertFunc) {
+
+                alert(
+                    "The end date of " + event.title + "has been moved " +
+                    dayDelta + " days and " +
+                    minuteDelta + " minutes."
+                );
+
+                if (!confirm("is this okay?")) {
+                    revertFunc();
+                }
+
+            },
 		});
 
 

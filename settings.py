@@ -95,7 +95,7 @@ SECRET_KEY = '_&h1rlswnog9+znyvs4=9uwfdc$bz)#0=tw)pneju#wf$v+4u&'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+#   'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -126,6 +126,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'rest_framework',
     'projects',
     'timesheet',
     'holidaysplanner',
@@ -143,8 +144,8 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
-     'require_debug_false': {
-         '()': 'django.utils.log.RequireDebugFalse'
+    'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
         }
      },
     'handlers': {

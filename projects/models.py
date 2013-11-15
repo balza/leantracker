@@ -2,10 +2,12 @@ from django.db import models
 from django.db.models import Manager
 from django.contrib.auth.models import Group
 
+
 #Valuta anche il Project.objects.filter(groups=???)
 class GroupProjectManager(Manager):
     def get_queryset(self):
-        return super(ProjectGroupManager, self).get_queryset()
+        return super(GroupProjectManager, self).get_queryset()
+
 
 class Project(models.Model):
     name = models.CharField(max_length=255)

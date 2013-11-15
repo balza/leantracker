@@ -1,28 +1,13 @@
 leantracker
 ===========
-django application for tracking work in the lean way
+Django application for tracking work in the lean way
 
-leantracker - product canvas
-============================
+LIBRARIES & DEPENDENCIES
+========================
+Javascript library for javascript frontend
+------------------------------------------
+http://arshaw.com/fullcalendar
 
-personas
---------
-* Paolo 42, scrum master: ha la necessità di tracciare gli impediments e di stabilire delle baseline per le stime 
-* Alessandro 42, product owner: ha bisogno di conoscere quali sono le attività attualmente in corso, sapere quanto sono costati i progetti
-* Marco 44, manager: vuole sapere quanto sono costati i progetti e poter garantire la continuità di servizio durante l'anno. Vorrebbe anche sapere quali sono i problemi che vengono incontrati più frequentemente dal team di sviluppo
-* Emiliano 36, sviluppatore: ha necessità di rendere più snello il processo di sviluppo tracciando le proprie attività e quello che lo rallentano
-* Daniele 41, sviluppatore e consulente host
-
-big picture
------------
-* Emiliano, Marco, Paolo, Daniele possono inserire quante ore ha lavorato durante la giornata su un progetto 
-* Emiliano, Marco, Paolo, Daniele possono inserire le risposte a "Cos'ho fatto ieri?", "Cosa farò oggi?" e  "Cosa ha rallentato la mia attività?"
-* Emiliano, Marco, Paolo, Daniele possono inserire le ferie
-* Marco può inserire nuovi progetti e modificare i vecchi già inseriti
-* Marco può modificare i gruppi di appartenenza di Emiliano, Paolo, Daniele
-* Alessandro può visualizzare i progetti
-* Marco può visualizzare i costi per progetto, per gruppo, per data
-
-Sandbox
--------
-Lo stato in cui viene messa l'attività fa parte di un workflow
+Django library for REST service
+-------------------------------
+https://github.com/tomchristie/django-rest-framework
