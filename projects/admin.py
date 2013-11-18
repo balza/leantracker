@@ -1,5 +1,5 @@
 from django.contrib import admin
-from leantracker.projects.models import Project
+from projects.models import Project
 
 
 class ProjectAdmin(admin.ModelAdmin):

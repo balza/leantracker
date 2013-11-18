@@ -2,8 +2,8 @@ from django.conf.urls import *
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 
-from leantracker.timesheet.models import Timesheet
-from leantracker.timesheet.views import timesheet
+from timesheet.models import Timesheet
+from timesheet.views import timesheet
 
 
 # Important: authentication, as often in django, It's a little bit alien for a java programmer,

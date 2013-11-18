@@ -1,5 +1,5 @@
 from django.conf.urls import *
-from leantracker.holidaysplanner.views import load
+from holidaysplanner.views import load
 
 
 # Important: authentication, as often in django, It's a little bit alien for a java programmer,

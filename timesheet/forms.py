@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import Form
-from leantracker.projects.models import Project
-from leantracker.timesheet.models import TimeEntry, Timesheet
+from projects.models import Project
+from timesheet.models import TimeEntry, Timesheet
 from datetime import date, timedelta
 from django.utils.safestring import mark_safe
 

@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import date, timedelta
-
-from leantracker.projects.models import Project
+from projects.models import Project
 
 
 TIMESHEET_STATUS = (

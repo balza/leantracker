@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from leantracker.projects.models import Project
+from projects.models import Project
 
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):

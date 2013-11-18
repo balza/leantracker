@@ -4,9 +4,9 @@ from django.core.urlresolvers import reverse
 from datetime import date
 from django.contrib.auth.models import User
 
-from leantracker.timesheet.forms import TimesheetForm
-from leantracker.timesheet.models import TimeEntry, Timesheet
-from leantracker.projects.models import Project
+from timesheet.forms import TimesheetForm
+from timesheet.models import TimeEntry, Timesheet
+from projects.models import Project
 
 
 class TimesheetViewTests(TestCase):

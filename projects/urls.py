@@ -1,5 +1,5 @@
 from django.conf.urls import *
-from leantracker.holidaysplanner.views import load, ProjectViewSet
+from projects.views import ProjectViewSet
 from rest_framework import routers
 
 
@@ -8,11 +8,10 @@ from rest_framework import routers
 #   ref https://docs.djangoproject.com/en/1.5/topics/auth/default/#module-django.contrib.auth.views
 
 router = routers.DefaultRouter()
-#router.register(r'projects', ProjectViewSet)
+router.register(r'projects', ProjectViewSet)
 
 urlpatterns = patterns('',
-                       #url(r'^', include(router.urls)),
-                       url(r'^$', load, name="load"),
+                       url(r'^', include(router.urls)),
                        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
                       )
 

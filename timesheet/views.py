@@ -4,8 +4,8 @@ from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
 from datetime import timedelta
 
-from leantracker.timesheet.forms import TimesheetForm
-from leantracker.timesheet.models import TimeEntry, Timesheet
+from timesheet.forms import TimesheetForm
+from timesheet.models import TimeEntry, Timesheet
 
 
 week_day = {
