@@ -11,6 +11,14 @@
 
 	$(document).ready(function() {
 
+	    $.getJSON( "http://localhost:8000/projects/list", function( data ) {
+          var items = [];
+          $.each( data, function( key, val ) {                    
+            items.push("<div class='external-event' id='" + val.code + "'>" + val.name + "</div>" );
+          });
+          $('#external-events').append( items );
+        });
+
 
 		/* initialize the external events
 		-----------------------------------------------------------------*/
@@ -177,9 +185,11 @@
         <div class='external-event'>My Event 3</div>
         <div class='external-event'>My Event 4</div>
         <div class='external-event'>My Event 5</div>
+        <!--
         <p>
             <input type='checkbox' id='drop-remove'/> <label for='drop-remove'>remove after drop</label>
         </p>
+        -->
     </div>
 
     <div id='calendar'></div>

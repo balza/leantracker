@@ -8,7 +8,7 @@ from rest_framework import routers
 #   ref https://docs.djangoproject.com/en/1.5/topics/auth/default/#module-django.contrib.auth.views
 
 router = routers.DefaultRouter()
-router.register(r'projects', ProjectViewSet)
+router.register(r'list', ProjectViewSet)
 
 urlpatterns = patterns('',
                        url(r'^', include(router.urls)),
