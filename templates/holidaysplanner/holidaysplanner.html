@@ -10,38 +10,31 @@
     <script>
 
 	$(document).ready(function() {
+	    /* initialize the external events
+		-----------------------------------------------------------------*/
 
 	    $.getJSON( "http://localhost:8000/projects/list", function( data ) {
           var items = [];
-          $.each( data, function( key, val ) {                    
-            items.push("<div class='external-event' id='" + val.code + "'>" + val.name + "</div>" );
-          });
-          $('#external-events').append( items );
-        });
-
-
-		/* initialize the external events
-		-----------------------------------------------------------------*/
-
-		$('#external-events div.external-event').each(function() {
-
-			// create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
+          $.each( data, function( key, val ) {
+            var item = $("<div class='external-event' id='" + val.code + "'>" + val.name + "</div>");
+            // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
 			// it doesn't need to have a start or end
-			var eventObject = {
-				title: $.trim($(this).text()) // use the element's text as the event title
+            var eventObject = {				
+				id: val.code, // use the element's code as the event id
+				title: val.name // use the element's text as the event title
 			};
-
 			// store the Event Object in the DOM element so we can get to it later
-			$(this).data('eventObject', eventObject);
-
+			item.data('eventObject', eventObject);
 			// make the event draggable using jQuery UI
-			$(this).draggable({
+			item.draggable({
 				zIndex: 999,
 				revert: true,      // will cause the event to go back to its
 				revertDuration: 0  //  original position after the drag
 			});
-
-		});
+			items.push(item);
+          });
+          $('#external-events').append( items );
+        });
 
 
 		/* initialize the calendar
@@ -178,18 +171,7 @@
 <div id='wrap'>
 
     <div id='external-events'>
-        <h4>Draggable Events</h4>
-
-        <div class='external-event'>My Event 1</div>
-        <div class='external-event'>My Event 2</div>
-        <div class='external-event'>My Event 3</div>
-        <div class='external-event'>My Event 4</div>
-        <div class='external-event'>My Event 5</div>
-        <!--
-        <p>
-            <input type='checkbox' id='drop-remove'/> <label for='drop-remove'>remove after drop</label>
-        </p>
-        -->
+        <h4>Draggable Events</h4>        
     </div>
 
     <div id='calendar'></div>
