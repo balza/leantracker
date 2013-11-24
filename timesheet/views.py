@@ -3,6 +3,8 @@ from django.template.context import RequestContext
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth.decorators import login_required
 from datetime import timedelta
+from rest_framework import viewsets
+from timesheet.serializers import TimeEntrySerializer
 
 from timesheet.forms import TimesheetForm
 from timesheet.models import TimeEntry, Timesheet
@@ -17,6 +19,11 @@ week_day = {
     6: 'sat',
     7: 'sun',
 }
+
+class InsertHolidayViewSet(viewsets.ModelViewSet):
+    print("InsertHolidayViewSet")
+    queryset = TimeEntry.objects.all()
+    serializer_class = TimeEntrySerializer
 
 
 @login_required

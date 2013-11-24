@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from datetime import date, timedelta
 from projects.models import Project
 
-
 TIMESHEET_STATUS = (
     ('W', 'Draft'),
     ('P', 'Submitted'),
@@ -56,3 +55,6 @@ class TimeEntry(models.Model):
     def __unicode__(self):
         return "For project %s the user %s in date %s worked %s hour" % (
         self.project, self.user, self.reg_date, self.hours)
+
+
+
