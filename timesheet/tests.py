@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 from timesheet.forms import TimesheetForm
 from timesheet.models import TimeEntry, Timesheet
 from projects.models import Project
+from rest_framework.test import APIRequestFactory,APIClient
+from timesheet.views import InsertHolidayViewSet
+from timesheet.serializers import TimeEntrySerializer
 
 
 class TimesheetViewTests(TestCase):
@@ -74,8 +77,8 @@ class TimesheetViewTests(TestCase):
         response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 32}))
         self.assertEqual(response.status_code, 200)
         #print response.context[-1]['formset']
-        self.assertContains(response, 'name="form-0-mon" value="0"', 1, 200)
-        self.assertContains(response, 'name="form-0-fri" value="0"', 1, 200)
+        self.assertContains(response, 'name="form-0-mon" size="2" type="text" value="0"', 1, 200)
+        self.assertContains(response, 'name="form-0-fri" size="2" type="text" value="0"', 1, 200)
         self.assertNotContains(response, 'name="form-1-thu"')
         self.assertEqual(0, timesheet.timeentry_set.count())
 
@@ -84,9 +87,8 @@ class TimesheetViewTests(TestCase):
         timesheet = Timesheet.objects.create_timesheet(year=2013, week_number=40, user=self.user)
         TimeEntry.objects.create(project=self.p1, hours=8, user=self.user, reg_date='2013-10-4', timesheet=timesheet)
         response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 40}))
-        #print response.context[-1]['formset']
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
+        self.assertContains(response, 'name="form-0-fri" size="2" type="text" value="8"', 1, 200)
         self.assertNotContains(response, 'name="form-1-thu"')
         self.assertEqual(1, timesheet.timeentry_set.count())
 
@@ -112,8 +114,8 @@ class TimesheetViewTests(TestCase):
         response = self.client.get(reverse('timesheet:load', kwargs={'year': 2013, 'week_number': 39}))
         self.assertEqual(response.status_code, 200)
         #print response.context[-1]['formset']
-        self.assertContains(response, 'name="form-0-fri" value="8"', 1, 200)
-        self.assertContains(response, 'name="form-1-thu" value="4"', 1, 200)
+        self.assertContains(response, 'name="form-0-fri" size="2" type="text" value="8"', 1, 200)
+        self.assertContains(response, 'name="form-1-thu" size="2" type="text" value="4"', 1, 200)
         self.assertNotContains(response, 'name="form-2-thu"')
         self.assertEqual(2, timesheet.timeentry_set.count())
 
@@ -178,6 +180,13 @@ class TimesheetViewTests(TestCase):
         self.assertEqual(1, timesheet.timeentry_set.count())
         self.assertTemplateUsed(response, 'timesheet/timesheet_list.html')
 
+    def test_InsertHolidayViewSet(self):
+        url = '/timesheet/insert/'
+        data = {"project": "1", "hours": "8", "user": "user", "reg_date": "2013-12-12", "timesheet": "1"}
+        response = self.client.post(url, data, format='json')
+        #self.assertEqual(response.status_code, 200)
+
+
 class TimesheetFormsTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('temporary', 'temporary@gmail.com', 'temporary')
@@ -213,3 +222,12 @@ class TimesheetFormsTests(TestCase):
         timesheetForm = TimesheetForm(data=post_data)
         self.assertEquals(1, len(timesheetForm.errors))
         self.assertFalse(timesheetForm.is_valid())
+
+'''
+class TimeEntrySerializerTests(TestCase):
+    def test_restore_object(self):
+        timeEntrySerializer = TimeEntrySerializer()
+        attrs={"hours":"8"}
+        timeEntry = timeEntrySerializer.restore_object(self, attrs)
+        self.assertIsNotNone(timeEntry)
+'''
