@@ -95,12 +95,15 @@
 			droppable: true, // this allows things to be dropped onto the calendar !!!
 			drop: function(date, allDay) { // this function is called when something is dropped
                  alert("drop" + date);
+                 var insertDate =  date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate();
+                 var jsonData =    '{"project_id": "1", "hours": "8", "user_id":"1", "reg_date":"' + insertDate + '","timesheet_id": "1"}';
+                 alert (jsonData);
                  $.ajax({
                     type: 'POST',
                     contentType: 'application/json',
                     dataType: "json",
                     url: '/timesheet/insert/',
-                    data: '{ "project_id": "1", "hours": "8", "username":"user", "reg_date":"2013-12-12", "timesheet_id": "1" }',
+                    data: jsonData,
                 });
 				// retrieve the dropped element's stored Event Object
 				var originalEventObject = $(this).data('eventObject');
